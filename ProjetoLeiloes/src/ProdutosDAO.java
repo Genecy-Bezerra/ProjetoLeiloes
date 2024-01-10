@@ -1,6 +1,8 @@
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /*
@@ -33,6 +35,42 @@ public class ProdutosDAO {
             System.out.println("Erro ao inserir registro no banco de dados.");
         }
         JOptionPane.showMessageDialog(null, "Produto inserido com sucesso" );
+    }
+
+    public ArrayList<ProdutosDTO> listarProdutos(){
+        var produtos = new ArrayList<ProdutosDTO>();
+
+        try {
+            // Conectamos com o banco de dados MySQL
+            conectaDAO bd = new conectaDAO();
+            bd.conectar();
+
+            // Construir a query e executar lá no MySQL
+            String sql = "SELECT * FROM produtos";
+            PreparedStatement comando = bd.getConexao().prepareStatement(sql);
+            ResultSet resposta = comando.executeQuery();
+
+            // Criar uma lista de produto baseado no ResultSet que tivemos do banco de dados
+            while (resposta.next()) {
+                // Declaro um objeto produto vazio
+                var p = new ProdutosDTO();
+
+                // Vou populando esse objeto produto com as informações do banco
+                p.setId(resposta.getInt("id"));
+                p.setNome(resposta.getString("nome"));
+                p.setValor(resposta.getInt("valor"));
+                p.setStatus(resposta.getString("status"));
+
+                // Adiciono a lista de produto
+                produtos.add(p);
+            }
+
+            bd.desconectar();
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar registros do banco de dados.");
+        }
+        return produtos;
     }
 }
 
