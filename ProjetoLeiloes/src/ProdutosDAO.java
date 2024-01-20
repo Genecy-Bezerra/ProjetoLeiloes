@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 
 public class ProdutosDAO {
     public void cadastrarProduto (ProdutosDTO produto){
+        
         try {
             // Conexão com o banco
             conectaDAO bd = new conectaDAO();
@@ -31,7 +32,7 @@ public class ProdutosDAO {
 
             comando.execute();
             bd.desconectar();
-        } catch (SQLException e) {
+        } catch (SQLException ex) {
             System.out.println("Erro ao inserir registro no banco de dados.");
         }
         JOptionPane.showMessageDialog(null, "Produto inserido com sucesso" );
@@ -67,10 +68,41 @@ public class ProdutosDAO {
 
             bd.desconectar();
 
-        } catch (SQLException e) {
+        } catch (SQLException ex) {
             System.out.println("Erro ao listar registros do banco de dados.");
         }
         return produtos;
     }
-}
+    
+    public void venderProduto(int id) {
+        
+
+            // Conexão com o banco
+            conectaDAO bd = new conectaDAO();
+            bd.conectar();
+
+//  ADICIONAR OS CAMPOS QUE VOCE VAI TER QUE INSERIR
+            String sql = "UPDATE  produtos SET status =? WHERE id=?";
+            
+            try{
+            PreparedStatement comando = bd.getConexao().prepareStatement(sql);
+            comando.setString(1, "Vendido");
+            comando.setInt(2, id);
+
+            comando.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Produto Vendido com sucesso" ); 
+            bd.desconectar();
+            
+        } catch (SQLException ex) {
+            System.out.println("Não foi possível vender o produto " + ex.getMessage());
+        }       
+      
+      }
+      
+      
+    }
+ 
+    
+    
+
 
