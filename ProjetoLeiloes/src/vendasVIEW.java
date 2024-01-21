@@ -1,7 +1,10 @@
 
+import java.awt.List;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -18,7 +21,8 @@ public class vendasVIEW extends javax.swing.JFrame {
      * Creates new form vendasVIEW
      */
     public vendasVIEW() {
-        initComponents();                        
+        initComponents();  
+        listarProdutos();
     }
 
     /**
@@ -32,14 +36,14 @@ public class vendasVIEW extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        listaProdutosVendidos = new javax.swing.JTable();
+        listageProdutosVendidos = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Lucida Fax", 0, 18)); // NOI18N
-        jLabel1.setText("Listage de Produtos Vendidos");
+        jLabel1.setText("Listagem de Produtos Vendidos");
 
-        listaProdutosVendidos.setModel(new javax.swing.table.DefaultTableModel(
+        listageProdutosVendidos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -50,7 +54,7 @@ public class vendasVIEW extends javax.swing.JFrame {
                 "ID", "Nome", "Valor", "Status"
             }
         ));
-        jScrollPane1.setViewportView(listaProdutosVendidos);
+        jScrollPane1.setViewportView(listageProdutosVendidos);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -78,10 +82,12 @@ public class vendasVIEW extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
    
     
     
+            
+    
+
     /**
      * @param args the command line arguments
      */
@@ -120,6 +126,28 @@ public class vendasVIEW extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable listaProdutosVendidos;
+    private javax.swing.JTable listageProdutosVendidos;
     // End of variables declaration//GEN-END:variables
+
+  private void listarProdutos(){
+        try {
+            ProdutosDAO produtosdao = new ProdutosDAO();
+            
+            DefaultTableModel model = (DefaultTableModel) listageProdutosVendidos.getModel();
+            model.setNumRows(0);
+            
+            ArrayList<ProdutosDTO> listagem = produtosdao.listarProdutos("Vendido");
+            
+            for(int i = 0; i < listagem.size(); i++){
+                model.addRow(new Object[]{
+                    listagem.get(i).getId(),
+                    listagem.get(i).getNome(),
+                    listagem.get(i).getValor(),
+                    listagem.get(i).getStatus()
+                });
+            }
+        } catch (Exception e) {
+            System.out.println("Erro ao listar produtos vendidos");
+        }
+    }
 }

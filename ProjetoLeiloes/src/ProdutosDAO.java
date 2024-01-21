@@ -39,6 +39,10 @@ public class ProdutosDAO {
     }
 
     public ArrayList<ProdutosDTO> listarProdutos(){
+        return this.listarProdutos(null);
+    }
+    
+    public ArrayList<ProdutosDTO> listarProdutos(String status){
         var produtos = new ArrayList<ProdutosDTO>();
 
         try {
@@ -48,7 +52,13 @@ public class ProdutosDAO {
 
             // Construir a query e executar lá no MySQL
             String sql = "SELECT * FROM produtos";
+            if (status != null && !status.isEmpty()){
+                sql = sql + " WHERE status = ?";
+            }
             PreparedStatement comando = bd.getConexao().prepareStatement(sql);
+            if (status != null && !status.isEmpty()){
+                comando.setString(1, status);
+            }
             ResultSet resposta = comando.executeQuery();
 
             // Criar uma lista de produto baseado no ResultSet que tivemos do banco de dados
@@ -75,13 +85,11 @@ public class ProdutosDAO {
     }
     
     public void venderProduto(int id) {
-        
-
             // Conexão com o banco
             conectaDAO bd = new conectaDAO();
             bd.conectar();
 
-//  ADICIONAR OS CAMPOS QUE VOCE VAI TER QUE INSERIR
+            //  ADICIONAR OS CAMPOS QUE VOCE VAI TER QUE INSERIR
             String sql = "UPDATE  produtos SET status =? WHERE id=?";
             
             try{
@@ -96,10 +104,7 @@ public class ProdutosDAO {
         } catch (SQLException ex) {
             System.out.println("Não foi possível vender o produto " + ex.getMessage());
         }       
-      
       }
-      
-      
     }
  
     
